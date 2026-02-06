@@ -1,0 +1,61 @@
+#Teste 1:
+
+services:
+  db-glpi:
+    image: mariadb:10.11
+    container_name: glpi-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=senha_mestra
+      - MYSQL_DATABASE=glpidb
+      - MYSQL_USER=glpi_user
+      - MYSQL_PASSWORD=glpi_pass
+    volumes:
+      # Use o caminho completo entre aspas para evitar erro de espaço
+      - "C:/Users/gabri/Downloads/projeto_glpi-texel/mysql:/var/lib/mysql"
+    restart: always
+
+  glpi-app:
+    image: diouxx/glpi:latest
+    container_name: glpi-app
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOSTNAME=db-glpi
+      - DB_DATABASE=glpidb
+      - DB_USER=glpi_user
+      - DB_PASSWORD=glpi_pass
+    volumes:
+      - "C:/Users/gabri/Downloads/projeto_glpi-texel/config:/var/www/html/config"
+      - "C:/Users/gabri/Downloads/projeto_glpi-texel/files:/var/www/html/files"
+    depends_on:
+      - db-glpi
+    restart: always
+
+
+#Teste 2:
+
+services:
+  db-glpi:
+    image: mariadb:10.11
+    container_name: glpi-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=senha_mestra
+      - MYSQL_DATABASE=glpidb
+      - MYSQL_USER=glpi_user
+      - MYSQL_PASSWORD=glpi_pass
+    volumes:
+      - ./mysql:/var/lib/mysql
+    restart: always
+
+  glpi-app:
+    image: diouxx/glpi:latest
+    container_name: glpi-app
+    ports:
+      - "8080:80"
+    volumes:
+      # MAPEAMENTO DIRETO DO ARQUIVO QUE VOCÊ ACABOU DE COPIAR
+      - ./config/config_db.php:/var/www/html/config/config_db.php
+      - ./files:/var/www/html/files
+    depends_on:
+      - db-glpi
+    restart: always
