@@ -59,3 +59,37 @@ services:
     depends_on:
       - db-glpi
     restart: always
+
+#Teste 3(deu bom):
+
+services:
+  db-glpi:
+    image: mariadb:10.11
+    container_name: glpi-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: senha_mestra
+      MYSQL_DATABASE: glpidb
+      MYSQL_USER: glpi_user
+      MYSQL_PASSWORD: glpi_pass
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  glpi-app:
+    image: diouxx/glpi:latest
+    container_name: glpi-app
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOSTNAME: db-glpi
+      DB_DATABASE: glpidb
+      DB_USER: glpi_user
+      DB_PASSWORD: glpi_pass
+    volumes:
+      - ./glpi:/var/www/html
+    depends_on:
+      - db-glpi
+
+
+
